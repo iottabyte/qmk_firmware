@@ -31,9 +31,8 @@
 #include QMK_KEYBOARD_H
 #include "action_layer.h"
 #include "remote_kb.h"
-#ifdef RGBLIGHT_ENABLE
 #include "bitc_led.h"
-#endif
+
 
 #define _BASE     0
 #define _MISC     1
@@ -80,6 +79,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   )
 };
 
+// Initialization function 2: Happens midway through the firmware’s startup process.
+// Hardware is initialized, but features may not be yet.
 void matrix_init_user(void) {
   matrix_init_remote_kb();
   register_code(KC_NLCK);
@@ -142,4 +143,12 @@ void led_set_kb(uint8_t usb_led) {
     set_bitc_LED(LED_DIM);
   else
     set_bitc_LED(LED_OFF);
+}
+
+void suspend_power_down_user(void) {
+    rgb_matrix_set_suspend_state(true);
+}
+
+void suspend_wakeup_init_user(void) {
+    rgb_matrix_set_suspend_state(false);
 }
