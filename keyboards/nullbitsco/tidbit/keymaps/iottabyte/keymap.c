@@ -38,6 +38,7 @@
 #define _MISC     1
 #define _PHSP     2
 #define _MACR     3
+#define _STUP     4
 
 enum custom_keycodes {
   PROG = SAFE_RANGE,
@@ -58,38 +59,52 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   // Function layer (misc navigation and media controls)
   [_MISC] = LAYOUT(
-           KC_NO, KC_MPLY, KC_MUTE,
-    KC_NO, KC_NO, RGB_MOD, RGB_MOD,
-    KC_HOME, KC_UP, KC_PGUP, RGB_HUI,
-    KC_LEFT, KC_NO, KC_RGHT, RGB_SAI,
-    KC_END,  KC_DOWN, KC_PGDN, RGB_VAI
+           MO(4), KC_MPLY, KC_MUTE, \
+    KC_NO, KC_NO, RGB_MOD, KC_NO, \
+    KC_HOME, KC_UP, KC_PGUP, RGB_TOG, \
+    KC_LEFT, KC_NO, KC_RGHT, RGB_M_SW, \
+    KC_END,  KC_DOWN, KC_PGDN, RGB_M_R \
   ),
   // Photoshop layer (photoshop shortcuts)
   [_PHSP] = LAYOUT(
-            MO(1), KC_NO, KC_NO,
-    KC_NO, KC_NO, KC_NO, KC_NO,
-    KC_HOME, KC_UP, KC_PGUP, RGB_HUI,
-    KC_L, KC_SPC, KC_I, KC_NO,
-    KC_E,  KC_N, KC_B, KC_NO
+            MO(1), KC_NO, KC_NO, \
+    KC_NO, KC_NO, KC_NO, KC_NO, \
+    KC_HOME, KC_UP, KC_PGUP, RGB_HUI, \
+    KC_L, KC_SPC, KC_I, KC_NO, \
+    KC_E,  KC_N, KC_B, KC_NO \
   )
 
   // Macro Layer (random macros)
   [_MACR] = LAYOUT(
-            KC_
+            KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
   )
+
+  // Setup layer (configuration keys)
+  [_STUP] = LAYOUT(
+            PROG, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
+  )
+
 };
 
 // Initialization function 2: Happens midway through the firmware’s startup process.
 // Hardware is initialized, but features may not be yet.
 void matrix_init_user(void) {
   matrix_init_remote_kb();
-  register_code(KC_NLCK);
 }
 
 void matrix_scan_user(void) {
   matrix_scan_remote_kb();
 }
 
+// ?? not sure what this does yet...
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   process_record_remote_kb(keycode, record);
 
@@ -108,7 +123,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-// Encoder layer select
+// encoder layer select
 uint8_t selected_layer = 0;
 void encoder_update_user(uint8_t index, bool clockwise) {
   switch (index) {
@@ -124,19 +139,19 @@ void encoder_update_user(uint8_t index, bool clockwise) {
   }  
 }
 
-// Underglow change based on layer
+// underglow change based on layer (WS2812B)
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
-    case _BASE:
+    case _MISC:
         rgblight_setrgb (0x00,  0x00, 0xFF);
         break;
-    case _MISC:
+    case _PHSP:
         rgblight_setrgb (0xFF,  0x00, 0x00);
         break;
-    case _PHSP:
+    case _MACR:
         rgblight_setrgb (0x00,  0xFF, 0x00);
         break;
-    case _MACR:
+    case _STUP:
         rgblight_setrgb (0x7A,  0x00, 0xFF);
         break;
     default: //  for any other layers, or the default layer
@@ -146,14 +161,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return state;
 }
 
-
-void led_set_kb(uint8_t usb_led) {
-  if (usb_led & (1<<USB_LED_CAPS_LOCK))
-    set_bitc_LED(LED_DIM);
-  else
-    set_bitc_LED(LED_OFF);
-}
-
 void suspend_power_down_user(void) {
     rgb_matrix_set_suspend_state(true);
 }
@@ -161,3 +168,13 @@ void suspend_power_down_user(void) {
 void suspend_wakeup_init_user(void) {
     rgb_matrix_set_suspend_state(false);
 }
+
+// LED control on micro controller
+void led_set_kb(uint8_t usb_led) {
+  if (usb_led & (1<<USB_LED_CAPS_LOCK))
+    set_bitc_LED(LED_DIM);
+  else
+    set_bitc_LED(LED_OFF);
+}
+
+
