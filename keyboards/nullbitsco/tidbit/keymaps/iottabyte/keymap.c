@@ -124,19 +124,28 @@ void encoder_update_user(uint8_t index, bool clockwise) {
   }  
 }
 
-uint32_t layer_state_t layer_state_set_user(layer_state_t state) {
-    switch (biton32(state)) {
+// Underglow change based on layer
+layer_state_t layer_state_set_user(layer_state_t state) {
+    switch (get_highest_layer(state)) {
     case _BASE:
-      backlight_set(3); // The number depends on your configuration's BACKLIGHT_LEVELS definition at config.h
-      break;
+        rgblight_setrgb (0x00,  0x00, 0xFF);
+        break;
     case _MISC:
-      backlight_set(0);
-      break;
+        rgblight_setrgb (0xFF,  0x00, 0x00);
+        break;
     case _PHSP:
-      backlight
-  }
+        rgblight_setrgb (0x00,  0xFF, 0x00);
+        break;
+    case _MACR:
+        rgblight_setrgb (0x7A,  0x00, 0xFF);
+        break;
+    default: //  for any other layers, or the default layer
+        rgblight_setrgb (0x00,  0xFF, 0xFF);
+        break;
+    }
   return state;
 }
+
 
 void led_set_kb(uint8_t usb_led) {
   if (usb_led & (1<<USB_LED_CAPS_LOCK))
