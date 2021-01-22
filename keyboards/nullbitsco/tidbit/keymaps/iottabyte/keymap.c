@@ -100,6 +100,7 @@ void matrix_init_user(void) {
   matrix_init_remote_kb();
 }
 
+// scans as often as MCU can handle, recommended to keep light
 void matrix_scan_user(void) {
   matrix_scan_remote_kb();
 }
@@ -161,6 +162,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return state;
 }
 
+
+// error on compile???
 void suspend_power_down_user(void) {
     rgb_matrix_set_suspend_state(true);
 }
