@@ -43,10 +43,6 @@ enum custom_keycodes {
   PROG = SAFE_RANGE,
 };
 
-enum td_keycodes {
-    TD_ENTER_LAYER
-};
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Base layer (numpad)
   [_BASE] = LAYOUT(
