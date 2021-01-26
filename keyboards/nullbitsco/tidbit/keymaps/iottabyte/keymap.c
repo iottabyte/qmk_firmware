@@ -88,6 +88,7 @@ void matrix_init_user(void) {
   matrix_init_remote_kb();
 }
 
+// scans as often as MCU can handle, recommended to keep light
 void matrix_scan_user(void) {
   matrix_scan_remote_kb();
 }
@@ -146,6 +147,19 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return state;
 }
 
+<<<<<<< HEAD
+=======
+
+// error on compile???
+void suspend_power_down_user(void) {
+    rgb_matrix_set_suspend_state(true);
+}
+
+void suspend_wakeup_init_user(void) {
+    rgb_matrix_set_suspend_state(false);
+}
+
+>>>>>>> ae9062a91cd04e6749b7a6b221ee4c17ab3b185e
 // LED control on micro controller
 void led_set_kb(uint8_t usb_led) {
   if (usb_led & (1<<USB_LED_CAPS_LOCK))
