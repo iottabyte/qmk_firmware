@@ -37,8 +37,7 @@
 #define _BASE     0
 #define _MISC     1
 #define _PHSP     2
-#define _MACR     3
-#define _STUP     4
+#define _STUP     3
 
 enum custom_keycodes {
   PROG = SAFE_RANGE,
@@ -65,6 +64,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_LEFT, KC_NO, KC_RGHT, RGB_M_SW, \
     KC_END,  KC_DOWN, KC_PGDN, RGB_M_R \
   ),
+
   // Photoshop layer (photoshop shortcuts)
   [_PHSP] = LAYOUT(
             MO(1), KC_NO, KC_NO, \
@@ -72,16 +72,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_HOME, KC_UP, KC_PGUP, RGB_HUI, \
     KC_L, KC_SPC, KC_I, KC_NO, \
     KC_E,  KC_N, KC_B, KC_NO \
-  )
-
-  // Macro Layer (random macros)
-  [_MACR] = LAYOUT(
-            KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
-  )
+  ),
 
   // Setup layer (configuration keys)
   [_STUP] = LAYOUT(
@@ -90,7 +81,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
-  )
+  ),
 
 };
 
@@ -142,14 +133,11 @@ void encoder_update_user(uint8_t index, bool clockwise) {
 // underglow change based on layer (WS2812B)
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
-    case _MISC:
+    case _MISC: // (0x00, 0xFF, 0x00)
         rgblight_setrgb (0x00,  0x00, 0xFF);
         break;
     case _PHSP:
         rgblight_setrgb (0xFF,  0x00, 0x00);
-        break;
-    case _MACR:
-        rgblight_setrgb (0x00,  0xFF, 0x00);
         break;
     case _STUP:
         rgblight_setrgb (0x7A,  0x00, 0xFF);
@@ -159,14 +147,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         break;
     }
   return state;
-}
-
-void suspend_power_down_user(void) {
-    rgb_matrix_set_suspend_state(true);
-}
-
-void suspend_wakeup_init_user(void) {
-    rgb_matrix_set_suspend_state(false);
 }
 
 // LED control on micro controller
