@@ -52,7 +52,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_KP_4, KC_KP_5,  KC_KP_6,  KC_NO, \
   KC_KP_1,   KC_KP_2,  KC_KP_3, KC_NO \
   ),
-  
+
   // Function layer (misc navigation and media controls)
   [_MISC] = LAYOUT(
            MO(4), KC_MPLY, KC_MUTE, \
@@ -147,19 +147,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return state;
 }
 
-<<<<<<< HEAD
-=======
-
-// error on compile???
-void suspend_power_down_user(void) {
-    rgb_matrix_set_suspend_state(true);
-}
-
-void suspend_wakeup_init_user(void) {
-    rgb_matrix_set_suspend_state(false);
-}
-
->>>>>>> ae9062a91cd04e6749b7a6b221ee4c17ab3b185e
 // LED control on micro controller
 void led_set_kb(uint8_t usb_led) {
   if (usb_led & (1<<USB_LED_CAPS_LOCK))
