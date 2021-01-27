@@ -4,14 +4,6 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /* Base Layout:
@@ -20,11 +12,11 @@
  * |------+------+------+--|
  * |     |  F2 |  F5 | F12 | 
  * |------+------+------+--|
- * |  7  |  8  |  9  |  0  | 
+ * |  7  |  8  |  9  | DEL | 
  * |------+------+------+--|
- * |  4  |  5  |  6  |     |
+ * |  4  |  5  |  6  | JIS |
  * |------+------+------+--|
- * |  1  |  2  |  3  |     |
+ * |  1  |  2  |  3  |  0  |    
  * `-----------------------`
  */
 
@@ -41,59 +33,62 @@
 
 enum custom_keycodes {
   PROG = SAFE_RANGE,
+  SEL,
+  DESEL,
+  LIQ,
+  TRFM,
+  N_LYR,
+  UNDO,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  // Base layer (numpad)
+  // Base layer (numpad & useful keys)
   [_BASE] = LAYOUT(
-           KC_F1,    KC_MEDIA_PREV_TRACK, KC_MEDIA_NEXT_TRACK, \
-  KC_NO, KC_F2,  KC_F5,        KC_F12, \
-  KC_KP_7, KC_KP_8,  KC_KP_9,  KC_KP_0, \
-  KC_KP_4, KC_KP_5,  KC_KP_6,  KC_NO, \
-  KC_KP_1,   KC_KP_2,  KC_KP_3, KC_NO \
+           KC_F1,    KC_MPRV, KC_MNXT, \
+  MO(1), KC_F2,  KC_F5,      KC_F12, \
+  KC_KP_7, KC_KP_8,  KC_KP_9,  KC_DEL, \
+  KC_KP_4, KC_KP_5,  KC_KP_6,  KC_LANG4, \
+  KC_KP_1,   KC_KP_2,  KC_KP_3, KC_KP_0 \
   ),
-
+  
   // Function layer (misc navigation and media controls)
   [_MISC] = LAYOUT(
-           MO(4), KC_MPLY, KC_MUTE, \
-    KC_NO, KC_NO, RGB_MOD, KC_NO, \
+           KC_WFAV, KC_MPLY, KC_MUTE, \
+    KC_NO, KC_NO, RGB_MOD, KC_PSCR, \
     KC_HOME, KC_UP, KC_PGUP, RGB_TOG, \
     KC_LEFT, KC_NO, KC_RGHT, RGB_M_SW, \
-    KC_END,  KC_DOWN, KC_PGDN, RGB_M_R \
+    KC_END,  KC_DOWN, KC_PGDN, RGB_M_P \
   ),
 
   // Photoshop layer (photoshop shortcuts)
   [_PHSP] = LAYOUT(
-            MO(1), KC_NO, KC_NO, \
-    KC_NO, KC_NO, KC_NO, KC_NO, \
-    KC_HOME, KC_UP, KC_PGUP, RGB_HUI, \
-    KC_L, KC_SPC, KC_I, KC_NO, \
-    KC_E,  KC_N, KC_B, KC_NO \
+            MO(1), N_LYR, LIQ, \
+    KC_NO, KC_CUT, KC_COPY, KC_PSTE, \
+    KC_LBRC, KC_RBRC, TRFM, SEL, \
+    KC_L, KC_SPC, KC_I, DESEL, \
+    KC_E,  KC_N, KC_B, UNDO \
   ),
 
   // Setup layer (configuration keys)
   [_STUP] = LAYOUT(
-            PROG, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
+            PROG, KC_NO, KC_NO, \
+  KC_NO, KC_NO, KC_NO, KC_TRNS, \
+  KC_MYCM, KC_NO, KC_NO, KC_TRNS, \
+  KC_NO, KC_NO, KC_NO, KC_NO, \
+  KC_PWR, KC_EJCT, KC_NO, KC_SLEP  \
   ),
 
 };
 
-// Initialization function 2: Happens midway through the firmware’s startup process.
-// Hardware is initialized, but features may not be yet.
 void matrix_init_user(void) {
   matrix_init_remote_kb();
 }
 
-// scans as often as MCU can handle, recommended to keep light
 void matrix_scan_user(void) {
   matrix_scan_remote_kb();
 }
 
-// ?? not sure what this does yet...
+// custom keys and macros
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   process_record_remote_kb(keycode, record);
 
@@ -106,8 +101,41 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
     break;
 
-    default:
-    break;
+    case UNDO:
+      if (record->event.pressed) {
+          SEND_STRING(SS_LCTL("z"));
+      } 
+      break;
+
+    case SEL: // select all
+      if (record->event.pressed) {
+          SEND_STRING(SS_LCTL("a"));
+      }
+      break;
+
+    case DESEL: // deselect selection
+      if (record->event.pressed) {
+          SEND_STRING(SS_LCTL("d"));
+      }
+      break;
+
+    case LIQ: // open liquify interface
+      if (record->event.pressed) {
+          SEND_STRING(SS_DOWN(X_LSHIFT)SS_DOWN(X_LCTRL)SS_TAP(X_X)SS_UP(X_LCTRL)SS_UP(X_LSHIFT));
+      }
+      break;
+
+    case TRFM: // transform object
+      if (record->event.pressed) {
+          SEND_STRING(SS_LCTL("t"));
+      }
+      break;
+
+    case N_LYR: // make new layer without dialogue box
+      if (record->event.pressed) {
+          SEND_STRING(SS_DOWN(X_LCTRL)SS_DOWN(X_LSHIFT)SS_DOWN(X_LALT)SS_TAP(X_N)SS_UP(X_LALT)SS_UP(X_LSHIFT)SS_UP(X_LCTRL));
+      }
+      break;
   }
   return true;
 }
@@ -131,17 +159,17 @@ void encoder_update_user(uint8_t index, bool clockwise) {
 // underglow change based on layer (WS2812B)
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
-    case _MISC: // (0x00, 0xFF, 0x00)
-        rgblight_setrgb (0x00,  0x00, 0xFF);
+    case _MISC: // light green
+        rgblight_setrgb (0x95,  0xEF, 0x8E);
         break;
-    case _PHSP:
-        rgblight_setrgb (0xFF,  0x00, 0x00);
+    case _PHSP: // soft blue
+        rgblight_setrgb (0x9E,  0xB5, 0xE0);
         break;
-    case _STUP:
-        rgblight_setrgb (0x7A,  0x00, 0xFF);
+    case _STUP: // goldenrod
+        rgblight_setrgb (0xFB,  0xD4, 0x26);
         break;
-    default: //  for any other layers, or the default layer
-        rgblight_setrgb (0x00,  0xFF, 0xFF);
+    default: //  for any other layers, or the default layer (pink)
+        rgblight_setrgb (0xEC,  0x55, 0x93);
         break;
     }
   return state;

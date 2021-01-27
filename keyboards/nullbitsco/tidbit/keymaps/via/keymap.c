@@ -72,8 +72,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Setup layer (configuration keys)
   [_STUP] = LAYOUT(
             PROG, KC_NO, KC_NO, \
-  KC_NO, KC_NO, KC_NO, KC_TRNS, \
-  KC_MYCM, KC_NO, KC_NO, KC_TRNS, \
+  KC_NO, KC_NO, KC_NO, KC_NO, \
+  KC_MYCM, KC_NO, KC_NO, KC_NO, \
   KC_NO, KC_NO, KC_NO, KC_NO, \
   KC_PWR, KC_EJCT, KC_NO, KC_SLEP  \
   ),
