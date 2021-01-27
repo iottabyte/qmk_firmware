@@ -12,11 +12,11 @@
  * |------+------+------+--|
  * |     |  F2 |  F5 | F12 | 
  * |------+------+------+--|
- * |  7  |  8  |  9  |  0  | 
+ * |  7  |  8  |  9  | DEL | 
  * |------+------+------+--|
- * |  4  |  5  |  6  |     |
+ * |  4  |  5  |  6  | JIS |
  * |------+------+------+--|
- * |  1  |  2  |  3  |     |    
+ * |  1  |  2  |  3  |  0  |    
  * `-----------------------`
  */
 
@@ -80,7 +80,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
-// Initialization function 2: Happens midway through the firmware’s startup process.
 void matrix_init_user(void) {
   matrix_init_remote_kb();
 }
@@ -104,26 +103,39 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case UNDO:
       if (record->event.pressed) {
-          SEND_STRING(SS_DOWN(X_LCTRL)SS_TAP(X_X)SS_UP(X_LCRTL))
+          SEND_STRING(SS_LCTL("z"));
       } 
       break;
 
-    case SEL:
+    case SEL: // select all
+      if (record->event.pressed) {
+          SEND_STRING(SS_LCTL("a"));
+      }
+      break;
 
+    case DESEL: // deselect selection
+      if (record->event.pressed) {
+          SEND_STRING(SS_LCTL("d"));
+      }
+      break;
 
-    case DESEL:
+    case LIQ: // open liquify interface
+      if (record->event.pressed) {
+          SEND_STRING(SS_DOWN(X_LSHIFT)SS_DOWN(X_LCTRL)SS_TAP(X_X)SS_UP(X_LCTRL)SS_UP(X_LSHIFT));
+      }
+      break;
 
+    case TRFM: // transform object
+      if (record->event.pressed) {
+          SEND_STRING(SS_LCTL("t"));
+      }
+      break;
 
-    case LIQ:
-
-
-    case TRFM:
-
-
-    case N_LYR:
-
-    default:
-    break;
+    case N_LYR: // make new layer without dialogue box
+      if (record->event.pressed) {
+          SEND_STRING(SS_DOWN(X_LCTRL)SS_DOWN(X_LSHIFT)SS_DOWN(X_LALT)SS_TAP(X_N)SS_UP(X_LALT)SS_UP(X_LSHIFT)SS_UP(X_LCTRL));
+      }
+      break;
   }
   return true;
 }
