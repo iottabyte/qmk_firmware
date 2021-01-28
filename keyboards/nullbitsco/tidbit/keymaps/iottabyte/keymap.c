@@ -145,7 +145,7 @@ uint8_t selected_layer = 0;
 void encoder_update_user(uint8_t index, bool clockwise) {
   switch (index) {
     case 0:
-      if (!clockwise && selected_layer  < 10) {
+      if (!clockwise && selected_layer  < 4) {
         selected_layer ++;
       } else if (clockwise && selected_layer  > 0) {
         selected_layer --;
@@ -159,8 +159,8 @@ void encoder_update_user(uint8_t index, bool clockwise) {
 // underglow change based on layer (WS2812B)
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
-    case _MISC: // light green
-        rgblight_setrgb (0x95,  0xEF, 0x8E);
+    case _MISC: // muted green
+        rgblight_setrgb (0xAB,  0xE5, 0xB8);
         break;
     case _PHSP: // soft blue
         rgblight_setrgb (0x9E,  0xB5, 0xE0);
