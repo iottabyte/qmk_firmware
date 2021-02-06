@@ -24,6 +24,7 @@
 #include "action_layer.h"
 #include "remote_kb.h"
 #include "bitc_led.h"
+#include "oled_hid.h"
 
 
 #define _BASE     0
@@ -39,13 +40,14 @@ enum custom_keycodes {
   TRFM,
   N_LYR,
   UNDO,
+  NXTSC,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Base layer (numpad & useful keys)
   [_BASE] = LAYOUT(
            KC_F1,    KC_MPRV, KC_MNXT, \
-  MO(1), KC_F2,  KC_F5,      KC_F12, \
+  NXTSC, KC_F2,  KC_F5,      KC_F12, \
   KC_KP_7, KC_KP_8,  KC_KP_9,  KC_DEL, \
   KC_KP_4, KC_KP_5,  KC_KP_6,  KC_LANG4, \
   KC_KP_1,   KC_KP_2,  KC_KP_3, KC_KP_0 \
@@ -71,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   // Setup layer (configuration keys)
   [_STUP] = LAYOUT(
-            PROG, KC_NO, KC_NO, \
+            PROG, KC_NO, NXTSC, \
   KC_NO, KC_NO, KC_NO, KC_TRNS, \
   KC_MYCM, KC_NO, KC_NO, KC_TRNS, \
   KC_NO, KC_NO, KC_NO, KC_NO, \
@@ -86,6 +88,10 @@ void matrix_init_user(void) {
 
 void matrix_scan_user(void) {
   matrix_scan_remote_kb();
+}
+
+void oled_task_user(void) {
+
 }
 
 // custom keys and macros
@@ -136,6 +142,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           SEND_STRING(SS_DOWN(X_LCTRL)SS_DOWN(X_LSHIFT)SS_DOWN(X_LALT)SS_TAP(X_N)SS_UP(X_LALT)SS_UP(X_LSHIFT)SS_UP(X_LCTRL));
       }
       break;
+
+    case NXTSC: // advance to next OLED screen
+        if (record->event.pressed) {
+            update_oled();
+        }
+       break;
   }
   return true;
 }
