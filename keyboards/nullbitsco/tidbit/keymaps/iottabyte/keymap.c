@@ -14,7 +14,7 @@
  * |------+------+------+--|
  * |  7  |  8  |  9  | DEL | 
  * |------+------+------+--|
- * |  4  |  5  |  6  | JIS |
+ * |  4  |  5  |  6  |  /  |
  * |------+------+------+--|
  * |  1  |  2  |  3  |  0  |    
  * `-----------------------`
@@ -47,25 +47,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Base layer (numpad & useful keys)
   [_BASE] = LAYOUT(
            KC_F1,    KC_MPRV, KC_MNXT, \
-  NXTSC, KC_F2,  KC_F5,      KC_F12, \
+  OSL(2), KC_F2,  KC_F5,      KC_F12, \
   KC_KP_7, KC_KP_8,  KC_KP_9,  KC_DEL, \
-  KC_KP_4, KC_KP_5,  KC_KP_6,  KC_LANG4, \
+  KC_KP_4, KC_KP_5,  KC_KP_6,  KC_SLSH, \
   KC_KP_1,   KC_KP_2,  KC_KP_3, KC_KP_0 \
   ),
   
   // Function layer (misc navigation and media controls)
   [_MISC] = LAYOUT(
            KC_WFAV, KC_MPLY, KC_MUTE, \
-    KC_NO, KC_NO, RGB_MOD, KC_PSCR, \
+    KC_NO, KC_BSPC, RGB_MOD, KC_PSCR, \
     KC_HOME, KC_UP, KC_PGUP, RGB_TOG, \
-    KC_LEFT, KC_NO, KC_RGHT, RGB_M_SW, \
+    KC_LEFT, KC_LSFT, KC_RGHT, KC_ENT, \
     KC_END,  KC_DOWN, KC_PGDN, RGB_M_P \
   ),
 
   // Photoshop layer (photoshop shortcuts)
   [_PHSP] = LAYOUT(
             MO(1), N_LYR, LIQ, \
-    KC_NO, KC_CUT, KC_COPY, KC_PSTE, \
+    KC_ENT, KC_CUT, KC_COPY, KC_PSTE, \
     KC_LBRC, KC_RBRC, TRFM, SEL, \
     KC_L, KC_SPC, KC_I, DESEL, \
     KC_E,  KC_N, KC_B, UNDO \
@@ -171,8 +171,8 @@ void encoder_update_user(uint8_t index, bool clockwise) {
 // underglow change based on layer (WS2812B)
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
-    case _MISC: // muted green
-        rgblight_setrgb (0xAB,  0xE5, 0xB8);
+    case _MISC: // green
+        rgblight_setrgb (0x72,  0xCB, 0x42);
         break;
     case _PHSP: // soft blue
         rgblight_setrgb (0x9E,  0xB5, 0xE0);
