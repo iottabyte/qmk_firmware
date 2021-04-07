@@ -47,7 +47,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Base layer (numpad & useful keys)
   [_BASE] = LAYOUT(
            KC_F1,    KC_MPRV, KC_MNXT, \
-  OSL(2), KC_F2,  KC_F5,      KC_F12, \
+  MO(2), KC_F2,  KC_F5,      KC_F12, \
   KC_KP_7, KC_KP_8,  KC_KP_9,  KC_DEL, \
   KC_KP_4, KC_KP_5,  KC_KP_6,  KC_SLSH, \
   KC_KP_1,   KC_KP_2,  KC_KP_3, KC_KP_0 \
